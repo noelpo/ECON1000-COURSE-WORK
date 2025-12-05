@@ -90,63 +90,73 @@
       <input type="number" min="0" max="6" placeholder="Quiz 5">
     </div>
 
-    <h3>Midsemester Score (out of 20)</h3>
-    <div class="input-group" id="midInputs">
-      <input type="number" min="0" max="20" placeholder="Midsem">
+    <h3>Midsemester Exam (% score)</h3>
+    <div class="input-group">
+      <input type="number" min="0" max="100" id="midsemInput" placeholder="Midsem %">
     </div>
 
-    <button onclick="calculate()">Calculate Coursework & Required Final</button>
+    <h3>Final Exam Score (optional, out of 100)</h3>
+    <div class="input-group">
+      <input type="number" min="0" max="100" id="finalInput" placeholder="Final Exam %">
+    </div>
 
-    <div class="result" id="courseworkResult"></div>
-    <div class="result" id="requiredFinal"></div>
+    <button onclick="calculate()">Calculate Final Grade</button>
+
+    <div class="result" id="gradeOutput"></div>
+    <div class="result" id="finalRequired"></div>
     <div class="error" id="errorMsg"></div>
   </div>
 
   <script>
     function calculate() {
-      const quizInputs = Array.from(document.querySelectorAll('#quizInputs input')).map(i => parseFloat(i.value));
-      const midInput = parseFloat(document.querySelector('#midInputs input').value);
+      const quizzes = Array.from(document.querySelectorAll('#quizInputs input')).map(input => parseFloat(input.value));
+      const midsem = parseFloat(document.getElementById('midsemInput').value);
+      const finalExam = parseFloat(document.getElementById('finalInput').value);
       const errorMsg = document.getElementById('errorMsg');
-      const courseworkResult = document.getElementById('courseworkResult');
-      const requiredFinal = document.getElementById('requiredFinal');
+      const gradeOutput = document.getElementById('gradeOutput');
+      const finalRequired = document.getElementById('finalRequired');
 
       errorMsg.textContent = '';
-      courseworkResult.textContent = '';
-      requiredFinal.textContent = '';
+      gradeOutput.textContent = '';
+      finalRequired.textContent = '';
 
-      // Validate quiz inputs
-      for (let score of quizInputs) {
-        if (isNaN(score) || score < 0 || score > 6) {
-          errorMsg.textContent = '⚠️ Quiz scores must be numbers between 0 and 6.';
+      // Validate quiz scores
+      for (let q of quizzes) {
+        if (isNaN(q) || q < 0 || q > 6) {
+          errorMsg.textContent = '❌ Quiz scores must be between 0 and 6.';
           return;
         }
       }
 
-      // Validate midterm input
-      if (isNaN(midInput) || midInput < 0 || midInput > 20) {
-        errorMsg.textContent = '⚠️ Midsemester score must be between 0 and 20.';
+      if (isNaN(midsem) || midsem < 0 || midsem > 100) {
+        errorMsg.textContent = '❌ Midsemester score must be between 0 and 100.';
         return;
       }
 
-      // Get best 3 quizzes
-      const bestThree = quizInputs.sort((a, b) => b - a).slice(0, 3);
-      const quizScore = bestThree.reduce((sum, val) => sum + val, 0);
+      if (!isNaN(finalExam) && (finalExam < 0 || finalExam > 100)) {
+        errorMsg.textContent = '❌ Final exam must be between 0 and 100.';
+        return;
+      }
+
+      // Calculate best 3 quizzes
+      const bestThree = quizzes.sort((a, b) => b - a).slice(0, 3);
+      const quizScore = bestThree.reduce((a, b) => a + b, 0);
       const quizPercent = (quizScore / 18) * 10; // out of 10%
 
-      // Midsem out of 20, worth 40%
-      const midPercent = (midInput / 20) * 40;
+      // Midsem is now in % form
+      const midsemPercent = (midsem / 100) * 40;
 
-      const courseworkTotal = quizPercent + midPercent;
+      const courseworkTotal = quizPercent + midsemPercent;
 
-      courseworkResult.textContent = `🎯 Coursework Total: ${courseworkTotal.toFixed(2)}%`;
-
-      const totalCourseworkWeight = 50;
-      const neededFinal = ((50 - courseworkTotal) / 50) * 100;
-
-      if (courseworkTotal < 50) {
-        requiredFinal.textContent = `📘 You need ${neededFinal.toFixed(2)}% in the final to pass.`;
+      let totalGrade;
+      if (!isNaN(finalExam)) {
+        const finalPercent = (finalExam / 100) * 50;
+        totalGrade = courseworkTotal + finalPercent;
+        gradeOutput.textContent = `🎓 Final Grade: ${totalGrade.toFixed(2)}%`;
       } else {
-        requiredFinal.textContent = `✅ You're already passing with your coursework!`;
+        gradeOutput.textContent = `📘 Coursework Total (Quizzes + Midsem): ${courseworkTotal.toFixed(2)}%`;
+        const requiredFinal = Math.max(0, ((50 - courseworkTotal) / 50) * 100);
+        finalRequired.textContent = `📌 You need ${requiredFinal.toFixed(2)}% in the Final Exam to PASS (50%).`;
       }
     }
   </script>
