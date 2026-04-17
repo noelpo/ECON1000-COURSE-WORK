@@ -1,153 +1,355 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ECON1000 Grade Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No Limits Tutorial Service ECON1000 Course Grade Calculator</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f8f8f8;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      min-height: 100vh;
       display: flex;
+      align-items: center;
       justify-content: center;
-      padding: 30px;
+      padding: 30px 16px;
+      margin: 0;
     }
-
-    .container {
-      background-color: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      max-width: 500px;
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      padding: 36px 40px;
       width: 100%;
-      text-align: center;
+      max-width: 480px;
     }
-
     h2 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-      font-weight: bold;
+      color: #2d3748;
+      font-size: 1.2em;
+      text-align: center;
+      margin: 0 0 4px;
+      line-height: 1.4;
     }
-
-    h3 {
-      margin-top: 30px;
-      font-size: 1.1em;
-      color: #444;
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      font-size: 0.88em;
+      margin: 0 0 24px;
     }
-
-    .input-group {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-top: 15px;
+    .weight-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 26px;
     }
-
-    input[type="number"] {
-      width: 80px;
-      padding: 10px;
-      font-size: 1em;
-      border: 1px solid #ccc;
+    .weight-pill {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
+      padding: 8px 10px;
       text-align: center;
     }
-
+    .weight-pill .wlabel { font-size: 0.72em; color: #718096; margin-bottom: 2px; }
+    .weight-pill .wvalue { font-size: 1em; font-weight: 700; color: #497174; }
+    .section-label {
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #497174;
+      margin: 0 0 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .section-hint {
+      font-size: 0.78em;
+      color: #a0aec0;
+      margin: 0 0 10px;
+    }
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .input-grid-single {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .field label {
+      font-size: 0.72em;
+      color: #718096;
+      text-align: center;
+    }
+    .field input {
+      padding: 9px 6px;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 0.95em;
+      background: #f7fafc;
+      color: #2d3748;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+    .field input:focus {
+      outline: none;
+      border-color: #74ebd5;
+      box-shadow: 0 0 0 3px rgba(116,235,213,0.2);
+    }
+    .midsem-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 200px;
+      margin: 0 auto;
+    }
+    .midsem-field label {
+      font-size: 0.78em;
+      color: #718096;
+      text-align: center;
+    }
+    .midsem-field input {
+      padding: 9px 11px;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 0.95em;
+      background: #f7fafc;
+      color: #2d3748;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+    .midsem-field input:focus {
+      outline: none;
+      border-color: #74ebd5;
+      box-shadow: 0 0 0 3px rgba(116,235,213,0.2);
+    }
     button {
-      margin-top: 30px;
-      padding: 15px;
-      background: linear-gradient(to right, #89f7fe, #66a6ff);
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #74ebd5, #ACB6E5);
       border: none;
-      border-radius: 10px;
+      border-radius: 9px;
       font-size: 1em;
+      font-weight: 700;
+      color: #2d3748;
       cursor: pointer;
-      font-weight: bold;
-      color: black;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 8px;
     }
-
-    .result {
-      margin-top: 25px;
-      font-weight: bold;
-      color: #222;
+    button:hover { opacity: 0.9; }
+    button:active { transform: scale(0.98); }
+    .error-msg {
+      font-size: 0.85em;
+      color: #c53030;
+      margin-top: 8px;
+      min-height: 20px;
     }
-
-    .error {
-      color: red;
-      margin-top: 10px;
+    .result-card {
+      margin-top: 20px;
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 18px 20px;
+      border: 1px solid #e2e8f0;
+      display: none;
     }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .metric {
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 13px;
+      border: 1px solid #e2e8f0;
+    }
+    .metric-label {
+      font-size: 0.75em;
+      color: #718096;
+      margin-bottom: 3px;
+    }
+    .metric-value {
+      font-size: 1.25em;
+      font-weight: 700;
+      color: #2d3748;
+    }
+    .metric-value span {
+      font-size: 0.65em;
+      font-weight: 400;
+      color: #a0aec0;
+    }
+    .best-quizzes {
+      font-size: 0.78em;
+      color: #718096;
+      margin-top: 4px;
+    }
+    .status-msg {
+      font-size: 0.9em;
+      padding: 12px 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+    .status-pass { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
+    .status-warn { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+    .status-fail { background: #fff5f5; color: #9b2c2c; border: 1px solid #feb2b2; }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="card">
     <h2>No Limits Tutorial Services</h2>
-    <h3>Coursework & Final Exam Calculator</h3>
+    <p class="subtitle">ECON1000  Coursework &amp; final exam grade calculator</p>
 
-    <h3>Quiz Scores (out of 6 each)</h3>
-    <div class="input-group" id="quizInputs">
-      <input type="number" min="0" max="6" placeholder="Quiz 1">
-      <input type="number" min="0" max="6" placeholder="Quiz 2">
-      <input type="number" min="0" max="6" placeholder="Quiz 3">
-      <input type="number" min="0" max="6" placeholder="Quiz 4">
-      <input type="number" min="0" max="6" placeholder="Quiz 5">
+    <div class="weight-summary">
+      <div class="weight-pill">
+        <div class="wlabel">Best 3 of 5 Quizzes</div>
+        <div class="wvalue">10%</div>
+      </div>
+      <div class="weight-pill">
+        <div class="wlabel">Mid-Semester Exam</div>
+        <div class="wvalue">40%</div>
+      </div>
+      <div class="weight-pill">
+        <div class="wlabel">Final Examination</div>
+        <div class="wvalue">50%</div>
+      </div>
     </div>
 
-    <h3>Midsemester Exam (% score out of 100)</h3>
-    <div class="input-group">
-      <input type="number" min="0" max="100" id="midsemInput" placeholder="Midsem %">
+    <p class="section-label">Quiz scores (out of 6 each)</p>
+    
+    <div class="input-grid">
+      <div class="field"><label>Quiz 1</label><input type="number" id="q1" min="0" max="6" step="0.01" placeholder="0–6"></div>
+      <div class="field"><label>Quiz 2</label><input type="number" id="q2" min="0" max="6" step="0.01" placeholder="0–6"></div>
+      <div class="field"><label>Quiz 3</label><input type="number" id="q3" min="0" max="6" step="0.01" placeholder="0–6"></div>
+      <div class="field"><label>Quiz 4</label><input type="number" id="q4" min="0" max="6" step="0.01" placeholder="0–6"></div>
+      <div class="field"><label>Quiz 5</label><input type="number" id="q5" min="0" max="6" step="0.01" placeholder="0–6"></div>
     </div>
 
-    <button onclick="calculate()">Calculate Coursework & Required Final</button>
+    <p class="section-label">Mid-Semester Examination</p>
+    <p class="section-hint">Enter your percentage score as shown on VLE (0–100).</p>
+    <div style="margin-bottom: 22px;">
+      <div class="midsem-field">
+        <label>Mid-Semester score (%)</label>
+        <input type="number" id="midsem" min="0" max="100" step="0.01" placeholder="e.g. 72">
+      </div>
+    </div>
 
-    <div class="result" id="courseworkOutput"></div>
-    <div class="result" id="finalRequiredOutput"></div>
-    <div class="error" id="errorMsg"></div>
+    <button onclick="calculate()">Calculate</button>
+    <div class="error-msg" id="error"></div>
+
+    <div class="result-card" id="result">
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="metric-label">Coursework total</div>
+          <div class="metric-value" id="cw-total">— <span>/ 50</span></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Best possible grade</div>
+          <div class="metric-value" id="best-total">— <span>/ 100</span></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Quiz contribution</div>
+          <div class="metric-value" id="quiz-pct">— <span>/ 10</span></div>
+          <div class="best-quizzes" id="best-quiz-detail"></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Midsem contribution</div>
+          <div class="metric-value" id="mid-pct">— <span>/ 40</span></div>
+        </div>
+      </div>
+      <div class="status-msg" id="status-msg"></div>
+    </div>
   </div>
 
   <script>
+    function valid(v, min, max) {
+      const n = Number(v);
+      return v !== "" && !isNaN(n) && n >= min && n <= max;
+    }
+
     function calculate() {
-      const quizzes = Array.from(document.querySelectorAll('#quizInputs input')).map(input => parseFloat(input.value));
-      const midsem = parseFloat(document.getElementById('midsemInput').value);
-      const errorMsg = document.getElementById('errorMsg');
-      const courseworkOutput = document.getElementById('courseworkOutput');
-      const finalRequiredOutput = document.getElementById('finalRequiredOutput');
+      const errEl   = document.getElementById("error");
+      const resEl   = document.getElementById("result");
+      errEl.textContent = "";
+      resEl.style.display = "none";
 
-      errorMsg.textContent = '';
-      courseworkOutput.textContent = '';
-      finalRequiredOutput.textContent = '';
+      const qVals = ["q1","q2","q3","q4","q5"].map(id => document.getElementById(id).value);
+      const mVal  = document.getElementById("midsem").value;
 
-      // Validate quiz scores
-      for (let q of quizzes) {
-        if (isNaN(q) || q < 0 || q > 6) {
-          errorMsg.textContent = '❌ Quiz scores must be between 0 and 6.';
+      for (let i = 0; i < 5; i++) {
+        if (!valid(qVals[i], 0, 6)) {
+          errEl.textContent = `Please enter a valid score (0–6) for Quiz ${i + 1}.`;
           return;
         }
       }
-
-      if (isNaN(midsem) || midsem < 0 || midsem > 100) {
-        errorMsg.textContent = '❌ Midsemester score must be between 0 and 100.';
+      if (!valid(mVal, 0, 100)) {
+        errEl.textContent = "Please enter a valid Mid-Semester score (0–100).";
         return;
       }
 
-      // Calculate best 3 quizzes
-      const bestThree = quizzes.sort((a, b) => b - a).slice(-3);
-      const quizScore = bestThree.reduce((a, b) => a + b, 0);
-      const quizPercent = (quizScore / 18) * 10; // 3 best quizzes out of 18, scaled to 10%
+      const scores = qVals.map(Number);
+      const midsem = Number(mVal);
 
-      // Midsemester exam out of 100%, scaled to 40%
-      const midsemPercent = (midsem / 100) * 40;
+      // Best 3 of 5 quizzes — sort descending, take first 3
+      const sorted = [...scores].sort((a, b) => b - a);
+      const best3  = sorted.slice(0, 3);
+      const best3Sum = best3.reduce((a, b) => a + b, 0);
 
-      const courseworkTotal = quizPercent + midsemPercent;
+      // Best 3 quizzes: max 18 raw → scaled to 10% of final grade
+      const quizPct = (best3Sum / 18) * 10;
 
-      courseworkOutput.textContent = `📘 Coursework Total: ${courseworkTotal.toFixed(2)}%`;
+      // Midsem: % score out of 100 → scaled to 40% of final grade
+      const midPct = (midsem / 100) * 40;
 
-      const requiredFinal = ((50 - courseworkTotal) / 50) * 100;
+      // Coursework total out of 50
+      const cwTotal   = quizPct + midPct;
+      const bestTotal = cwTotal + 50;
 
-      if (courseworkTotal >= 50) {
-        finalRequiredOutput.textContent = `✅ You're already passing with your coursework!`;
+      // Final exam worth 50% — need overall ≥ 50 to pass
+      const neededFinalPct  = Math.max(0, 50 - cwTotal);
+      // Final is out of 100 scaled to 50%, so mark out of 100 = neededFinalPct / 50 * 100
+      const neededFinalMark = (neededFinalPct / 50) * 100;
+
+      document.getElementById("cw-total").innerHTML   = `${cwTotal.toFixed(2)} <span>/ 50</span>`;
+      document.getElementById("best-total").innerHTML = `${bestTotal.toFixed(2)} <span>/ 100</span>`;
+      document.getElementById("quiz-pct").innerHTML   = `${quizPct.toFixed(2)} <span>/ 10</span>`;
+      document.getElementById("mid-pct").innerHTML    = `${midPct.toFixed(2)} <span>/ 40</span>`;
+
+      // Show which quizzes were used
+      const quizLabels = scores.map((s, i) => ({ score: s, label: `Q${i+1}` }))
+                               .sort((a, b) => b.score - a.score)
+                               .slice(0, 3)
+                               .map(q => `${q.label}: ${q.score}`)
+                               .join(", ");
+      document.getElementById("best-quiz-detail").textContent = `Best 3 used: ${quizLabels}`;
+
+      const statusEl = document.getElementById("status-msg");
+      statusEl.className = "status-msg";
+
+      if (neededFinalPct === 0) {
+        statusEl.classList.add("status-pass");
+        statusEl.textContent = "You have already secured a pass from coursework alone. Doing well in the final will only improve your grade!";
+      } else if (neededFinalMark > 100) {
+        statusEl.classList.add("status-fail");
+        statusEl.textContent = `You need ${neededFinalPct.toFixed(2)}% from the final (${neededFinalMark.toFixed(2)} / 100) to pass — this exceeds the maximum possible mark. Unfortunately a pass is not achievable this semester.`;
       } else {
-        finalRequiredOutput.textContent = `📌 You need ${requiredFinal.toFixed(2)}% in the Final Exam to PASS (total 50%).`;
+        statusEl.classList.add(neededFinalPct <= 25 ? "status-pass" : "status-warn");
+        statusEl.textContent = `You need ${neededFinalPct.toFixed(2)}% from the final exam, which is ${neededFinalMark.toFixed(2)} out of 100 marks.`;
       }
+
+      resEl.style.display = "block";
     }
   </script>
 </body>
 </html>
+
 
